@@ -12,8 +12,8 @@ import com.wellingon.emprestimos.controller.dto.PagamentoRequestDTO;
 import com.wellingon.emprestimos.controller.dto.PagamentoResponseDTO;
 import com.wellingon.emprestimos.service.PagamentoService;
 
-@RestController
-@RequestMapping("/pagamentos")
+// @RestController
+// @RequestMapping("/pagamentos")
 public class PagamentoController {
 
   @Autowired

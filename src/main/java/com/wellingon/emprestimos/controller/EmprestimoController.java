@@ -13,8 +13,8 @@ import com.wellingon.emprestimos.controller.dto.EmprestimoRequestDTO;
 import com.wellingon.emprestimos.controller.dto.EmprestimoResponseDTO;
 import com.wellingon.emprestimos.service.EmprestimoService;
 
-@RestController
-@RequestMapping("emprestimos")
+// @RestController
+// @RequestMapping("emprestimos")
 public class EmprestimoController {
 
   @Autowired
