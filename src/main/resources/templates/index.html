@@ -1,0 +1,639 @@
+<!doctype html>
+
+<!-- design gerado pelo Google Stich -->
+
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Dashboard de Empréstimos</title>
+    <style>
+      /* Reset & Base System */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg-main: #0b0f17;
+        --bg-card: #151d2c;
+        --bg-card-hover: #1a2436;
+        --bg-card-header: #101622;
+        --border-subtle: rgba(255, 255, 255, 0.08);
+        --border-accent: rgba(59, 130, 246, 0.25);
+
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-faint: #64748b;
+
+        --primary: #38bdf8;
+        --primary-dim: rgba(56, 189, 248, 0.12);
+        --amber: #fbbf24;
+        --amber-dim: rgba(251, 191, 36, 0.14);
+        --emerald: #34d399;
+        --emerald-dim: rgba(52, 211, 153, 0.12);
+        --rose: #f87171;
+        --rose-dim: rgba(248, 113, 113, 0.12);
+
+        --font-family:
+          system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.45);
+        --radius-card: 16px;
+        --radius-badge: 9999px;
+      }
+
+      body {
+        background-color: var(--bg-main);
+        color: var(--text-main);
+        font-family: var(--font-family);
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        padding-bottom: 120px;
+        /* Spacing for sticky summary bar */
+        min-height: 100vh;
+      }
+
+      /* Top Navigation Header */
+      .app-header {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        background: rgba(11, 15, 23, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border-subtle);
+        padding: 14px 16px;
+      }
+
+      .header-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .brand-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .brand-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #2563eb, #38bdf8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 700;
+        font-size: 16px;
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+      }
+
+      .brand-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: var(--text-main);
+      }
+
+      .badge-count {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--primary);
+        background: var(--primary-dim);
+        border: 1px solid rgba(56, 189, 248, 0.25);
+        padding: 2px 8px;
+        border-radius: var(--radius-badge);
+      }
+
+      /* Page Intro */
+      .main-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 18px 16px;
+      }
+
+      .page-lead {
+        margin-bottom: 18px;
+      }
+
+      .page-title {
+        font-size: 1.35rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        color: #ffffff;
+        margin-bottom: 4px;
+      }
+
+      .page-subtitle {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+      }
+
+      /* Card Grid - Responsive */
+      .loan-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      @media (min-width: 640px) {
+        .loan-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 18px;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .loan-grid {
+          grid-template-columns: repeat(3, 1fr);
+          gap: 20px;
+        }
+      }
+
+      /* Loan Card */
+      .loan-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-card);
+        box-shadow: var(--shadow-card);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        transition:
+          border-color 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .loan-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #38bdf8, #6366f1);
+        opacity: 0.8;
+      }
+
+      .card-header {
+        padding: 14px 16px 12px;
+        background: var(--bg-card-header);
+        border-bottom: 1px solid var(--border-subtle);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .card-client-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .client-name {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #ffffff;
+        letter-spacing: -0.015em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .loan-date {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 2px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .badge-rate {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #38bdf8;
+        background: rgba(56, 189, 248, 0.12);
+        border: 1px solid rgba(56, 189, 248, 0.3);
+        padding: 3px 9px;
+        border-radius: var(--radius-badge);
+        white-space: nowrap;
+        letter-spacing: 0.02em;
+      }
+
+      .card-body {
+        padding: 14px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        flex: 1;
+      }
+
+      .metric-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.82rem;
+      }
+
+      .metric-label {
+        color: var(--text-muted);
+      }
+
+      .metric-value-base {
+        font-weight: 600;
+        color: #e2e8f0;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .metric-value-interest {
+        font-weight: 700;
+        color: var(--amber);
+        background: var(--amber-dim);
+        padding: 2px 8px;
+        border-radius: 6px;
+        border: 1px solid rgba(251, 191, 36, 0.2);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .card-divider {
+        height: 1px;
+        background: var(--border-subtle);
+        margin: 2px 0;
+      }
+
+      .card-total-box {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 10px 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+      }
+
+      .total-box-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+      }
+
+      .total-box-value {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #38bdf8;
+        letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .card-footer-meta {
+        padding: 8px 16px;
+        background: rgba(0, 0, 0, 0.2);
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
+        font-size: 0.68rem;
+        color: var(--text-faint);
+        display: flex;
+        justify-content: space-between;
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      }
+
+      /* Summary Bar (Sticky Bottom with Glassmorphism) */
+      .summary-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 50;
+        background: rgba(15, 23, 42, 0.88);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.6);
+        padding: 12px 16px;
+      }
+
+      .summary-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+
+      .summary-item {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        padding: 4px 6px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.03);
+      }
+
+      .summary-item.highlight {
+        background: rgba(56, 189, 248, 0.08);
+        border: 1px solid rgba(56, 189, 248, 0.25);
+      }
+
+      .summary-label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--text-muted);
+        font-weight: 600;
+        margin-bottom: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .summary-value {
+        font-size: 0.95rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .summary-value.val-base {
+        color: #e2e8f0;
+      }
+
+      .summary-value.val-interest {
+        color: var(--amber);
+      }
+
+      .summary-value.val-total {
+        color: #38bdf8;
+      }
+
+      /* Empty State */
+      .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-muted);
+      }
+
+      .empty-icon {
+        margin-bottom: 16px;
+        opacity: 0.35;
+      }
+
+      .empty-text {
+        font-size: 0.95rem;
+        font-weight: 500;
+      }
+
+      @media (min-width: 640px) {
+        .summary-label {
+          font-size: 0.72rem;
+        }
+
+        .summary-value {
+          font-size: 1.25rem;
+        }
+
+        .summary-item {
+          padding: 8px 12px;
+        }
+      }
+    </style>
+    <style>
+      @media (max-width: 640px) {
+        body {
+          padding-bottom: 110px;
+        }
+
+        .main-content {
+          padding: 16px 12px;
+        }
+
+        .loan-grid {
+          grid-template-columns: 1fr;
+          gap: 14px;
+        }
+
+        .page-lead {
+          margin-bottom: 14px;
+          padding: 0 4px;
+        }
+
+        .page-title {
+          font-size: 1.25rem;
+        }
+
+        .page-subtitle {
+          font-size: 0.8rem;
+        }
+
+        .card-header {
+          padding: 12px 14px;
+        }
+
+        .client-name {
+          font-size: 0.98rem;
+        }
+
+        .card-body {
+          padding: 12px 14px;
+          gap: 10px;
+        }
+
+        .card-total-box {
+          padding: 9px 12px;
+        }
+
+        .total-box-value {
+          font-size: 1.1rem;
+        }
+
+        .summary-bar {
+          padding: 10px 12px;
+        }
+
+        .summary-container {
+          gap: 6px;
+        }
+
+        .summary-item {
+          padding: 6px 4px;
+        }
+
+        .summary-label {
+          font-size: 0.62rem;
+        }
+
+        .summary-value {
+          font-size: 0.9rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Top Navigation Header -->
+    <header class="app-header">
+      <div class="header-container">
+        <div class="brand-group">
+          <div class="brand-icon">
+            <span>%</span>
+          </div>
+          <div>
+            <h1 class="brand-title">Gestão de Empréstimos</h1>
+          </div>
+        </div>
+        <span
+          class="badge-count"
+          title="Total de contratos ativos"
+          th:text="${quantidade} + ' ativos'"
+          >0 ativos</span
+        >
+      </div>
+    </header>
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="page-lead">
+        <!-- <h2 class="page-title">Carteira de Clientes</h2> -->
+        <p class="page-subtitle">
+          Valores atualizados com juros mensais acumulados
+        </p>
+      </div>
+      <!-- Responsive Card Grid -->
+      <div class="loan-grid" th:if="${!emprestimos.isEmpty()}">
+        <article
+          class="loan-card"
+          th:each="emp : ${emprestimos}"
+          th:attr="id='loan-card-' + ${emp.id}"
+        >
+          <header class="card-header">
+            <div class="card-client-info">
+              <h3
+                class="client-name"
+                th:attr="title=${emp.nome}"
+                th:text="${emp.nome}"
+              >
+                Nome
+              </h3>
+              <span class="loan-date">
+                <svg
+                  fill="none"
+                  height="12"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  style="opacity: 0.7"
+                  viewbox="0 0 24 24"
+                  width="12"
+                >
+                  <rect height="18" rx="2" ry="2" width="18" x="3" y="4"></rect>
+                  <line x1="16" x2="16" y1="2" y2="6"></line>
+                  <line x1="8" x2="8" y1="2" y2="6"></line>
+                  <line x1="3" x2="21" y1="10" y2="10"></line>
+                </svg>
+                <span th:text="${#temporals.format(emp.data, 'dd/MM/yyyy')}"
+                  >01/01/2024</span
+                >
+              </span>
+            </div>
+            <span class="badge-rate" th:text="${emp.taxaDeJuros} + '% a.m.'"
+              >0% a.m.</span
+            >
+          </header>
+          <div class="card-body">
+            <div class="metric-row">
+              <span class="metric-label">Emprestado</span>
+              <span
+                class="metric-value-base"
+                th:text="'R$ ' + ${#numbers.formatDecimal(emp.valor, 1, 'COMMA', 2, 'POINT')}"
+                >R$ 0,00</span
+              >
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Juros acumulados</span>
+              <span
+                class="metric-value-interest"
+                th:text="'+ R$ ' + ${#numbers.formatDecimal(emp.jurosAcumulados, 1, 'COMMA', 2, 'POINT')}"
+                >+ R$ 0,00</span
+              >
+            </div>
+            <div class="card-divider"></div>
+            <div class="card-total-box">
+              <span class="total-box-label">Total devido</span>
+              <span
+                class="total-box-value"
+                th:text="'R$ ' + ${#numbers.formatDecimal(emp.valorTotalDevido, 1, 'COMMA', 2, 'POINT')}"
+                >R$ 0,00</span
+              >
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" th:if="${emprestimos.isEmpty()}">
+        <div class="empty-icon">
+          <svg
+            fill="none"
+            height="48"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            viewbox="0 0 24 24"
+            width="48"
+          >
+            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+            <path d="M2 17l10 5 10-5"></path>
+            <path d="M2 12l10 5 10-5"></path>
+          </svg>
+        </div>
+        <p class="empty-text">Nenhum empréstimo cadastrado</p>
+      </div>
+    </main>
+    <!-- Summary Bar (Sticky Bottom) -->
+    <footer class="summary-bar">
+      <div class="summary-container">
+        <div class="summary-item">
+          <span class="summary-label">Total Emprestado</span>
+          <span class="summary-value val-base" th:text="${totalEmprestado}"
+            >R$ 0,00</span
+          >
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Total Juros</span>
+          <span
+            class="summary-value val-interest"
+            th:text="'+ ' + ${totalJuros}"
+            >+ R$ 0,00</span
+          >
+        </div>
+        <div class="summary-item highlight">
+          <span class="summary-label">Total Devido</span>
+          <span class="summary-value val-total" th:text="${totalDevido}"
+            >R$ 0,00</span
+          >
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
